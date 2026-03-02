@@ -1,70 +1,76 @@
-# Telegram AI Bot 🤖
+# 🤖 Telegram AI Bot
 
-A Next.js Telegram bot using **Chat SDK**, **Vercel AI SDK**, and **OpenRouter**.
+A stateless Telegram AI chatbot built with **Next.js** and **OpenRouter**, deployed on **Vercel**.
+
+## How It Works
+
+- Telegram sends messages to the `/api/webhooks/telegram` webhook
+- The handler calls **OpenRouter** (`openrouter/auto`) to generate a response
+- The reply is sent back directly via the Telegram Bot API
+- Fully stateless — no database or memory required, works perfectly on serverless
 
 ## Stack
 
-- **Framework**: Next.js (App Router) on Vercel
-- **Bot Platform**: `chat` + `@chat-adapter/telegram`
-- **AI Provider**: OpenRouter (`anthropic/claude-3.5-sonnet` by default)
-- **Runtime**: Node.js (Vercel Serverless)
+- [Next.js](https://nextjs.org/) — API route for the webhook
+- [Vercel AI SDK](https://sdk.vercel.ai/) — `generateText` for LLM calls
+- [OpenRouter](https://openrouter.ai/) — model routing (`openrouter/auto`)
+- [Vercel](https://vercel.com/) — deployment
 
-## Local Development
+## Setup
+
+### 1. Clone & Install
 
 ```bash
+git clone https://github.com/aeither/telegram-bot-ai-chat.git
+cd telegram-bot-ai-chat
 bun install
-bun run dev
 ```
 
-## Deploy to Vercel
+### 2. Environment Variables
 
-1. Push this repo to GitHub
-2. Import the project in [vercel.com](https://vercel.com)
-3. Add the following **Environment Variables** in Vercel → Settings → Environment Variables:
+Create a `.env.local` file:
 
-| Variable | Value |
-|---|---|
-| `TELEGRAM_BOT_TOKEN` | Your bot token from @BotFather |
-| `TELEGRAM_WEBHOOK_SECRET_TOKEN` | Any random secret string |
-| `TELEGRAM_BOT_USERNAME` | Your bot username (without `@`) |
-| `OPENROUTER_API_KEY` | Your OpenRouter API key |
+```env
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_WEBHOOK_SECRET_TOKEN=your_secret_token
+TELEGRAM_BOT_USERNAME=your_bot_username
+OPENROUTER_API_KEY=your_openrouter_api_key
+```
 
-## Register the Webhook (after deploy)
-
-Replace `YOUR_VERCEL_DOMAIN` with your actual Vercel deployment URL:
+### 3. Deploy to Vercel
 
 ```bash
-curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
+vercel deploy
+```
+
+Add all the environment variables above in your Vercel project settings.
+
+### 4. Register the Webhook
+
+```bash
+curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" \
   -H "Content-Type: application/json" \
   -d '{
-    "url": "https://YOUR_VERCEL_DOMAIN/api/webhooks/telegram",
-    "secret_token": "$TELEGRAM_WEBHOOK_SECRET_TOKEN",
+    "url": "https://<YOUR_VERCEL_DOMAIN>/api/webhooks/telegram",
+    "secret_token": "<YOUR_SECRET_TOKEN>",
     "allowed_updates": ["message", "callback_query"]
   }'
 ```
 
-Verify it:
+### 5. Verify the Webhook
 
 ```bash
-curl "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getWebhookInfo"
+curl "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getWebhookInfo"
 ```
 
-## Switching Models
+## Project Structure
 
-Edit the `MODEL` constant in `lib/bot.ts`:
-
-| Model | Notes |
-|---|---|
-| `anthropic/claude-3.5-sonnet` | Best all-round (default) |
-| `google/gemini-2.0-flash-001` | Fast + cheap |
-| `deepseek/deepseek-r1` | Strong reasoning |
-| `openai/gpt-4o` | OpenAI via OpenRouter |
-| `meta-llama/llama-3.3-70b-instruct` | Open-source |
-
-## Adding Conversation Memory (Redis)
-
-```bash
-bun add @chat-adapter/state-redis ioredis
 ```
-
-See the main spec for the full Redis integration code.
+app/
+  api/
+    webhooks/
+      telegram/
+        route.ts   # Stateless webhook handler
+app/
+  page.tsx         # Landing page
+```
