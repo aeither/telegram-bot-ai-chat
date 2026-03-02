@@ -8,7 +8,7 @@ const openrouter = createOpenRouter({
     apiKey: process.env.OPENROUTER_API_KEY!,
 });
 
-const MODEL = "openrouter/auto";
+const MODEL = "openrouter/free";
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!;
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET_TOKEN!;
 
