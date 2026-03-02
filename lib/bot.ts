@@ -1,10 +1,12 @@
 import { Chat } from "chat";
 import { createTelegramAdapter } from "@chat-adapter/telegram";
-import { createMemoryState } from "@chat-adapter/state-memory";
+import { createRedisState } from "@chat-adapter/state-redis";
 
 export const bot = new Chat({
-    userName: "mybot",
-    state: createMemoryState(),
+    userName: process.env.TELEGRAM_BOT_USERNAME!,
+    state: createRedisState({
+        url: process.env.REDIS_URL!,
+    }),
     adapters: {
         telegram: createTelegramAdapter(),
     },

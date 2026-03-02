@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@chat-adapter/state-memory": "^4.15.0",
+    "@chat-adapter/state-redis": "^4.15.0",
     "@chat-adapter/telegram": "^4.15.0",
     "@openrouter/ai-sdk-provider": "^2.2.3",
     "ai": "^6.0.105",
