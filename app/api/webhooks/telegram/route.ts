@@ -8,7 +8,7 @@ const openrouter = createOpenRouter({
     apiKey: process.env.OPENROUTER_API_KEY!,
 });
 
-const MODEL = "anthropic/claude-3.5-sonnet";
+const MODEL = "openrouter/auto";
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!;
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET_TOKEN!;
 
