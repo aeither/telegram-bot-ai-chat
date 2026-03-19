@@ -11,14 +11,14 @@ const openrouter = createOpenRouter({
 // Pick any model from openrouter.ai/models
 const MODEL = "openrouter/free";
 
+const telegram = createTelegramAdapter();
+
 export const bot = new Chat({
     userName: process.env.TELEGRAM_BOT_USERNAME!,
     state: createRedisState({
         url: process.env.REDIS_URL!,
     }),
-    adapters: {
-        telegram: createTelegramAdapter(),
-    },
+    adapters: { telegram },
 });
 
 // Handle all direct messages (match any text)
@@ -49,3 +49,6 @@ bot.onNewMention(async (thread, message) => {
 
     await thread.post(text);
 });
+
+// Call initialize() so polling can start in long-running local processes:
+void bot.initialize();
